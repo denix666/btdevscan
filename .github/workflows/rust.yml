@@ -1,0 +1,64 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  linux_build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --release
+
+    - shell: bash
+      run: |
+        mv target/release/btdevscan btdevscan
+        chmod 777 btdevscan
+        tar cpfz btdevscan_linux_x86_64.tar.gz btdevscan
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: btdevscan_linux_x86_64.tar.gz
+
+  windows_build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --release
+
+    - name: Prepare artifact
+      shell: pwsh
+      run: |
+        Move-Item target/release/btdevscan.exe btdevscan.exe
+        Compress-Archive -Path btdevscan.exe -DestinationPath btdevscan_windows_x86_64.zip
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: btdevscan_windows_x86_64.zip
+
+  macos_build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --release
+
+    - shell: bash
+      run: |
+        mv target/release/btdevscan btdevscan
+        chmod 777 btdevscan
+        tar cpfz btdevscan_macos_x86_64.tar.gz btdevscan
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: btdevscan_macos_x86_64.tar.gz

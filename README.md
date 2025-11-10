@@ -1,2 +1,2 @@
 # btdevscan
-Scanner for discovering services and characteristics of the bluetooth device
+Command line scanner for discovering services and characteristics of the bluetooth device
